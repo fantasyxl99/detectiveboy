@@ -15,12 +15,12 @@ class Utility extends \think\Controller
         $code = input('get.code');
         if($code){
             $user_email = Db::name('code')->where('code',$code)->value('email');
-            $activated=Db::name('user')->where('uname',$user_email)->value('is_activated');
+            $activated=Db::name('user')->where('account',$user_email)->value('is_activated');
             if($activated==1){
                 echo '该用户已经激活';
             }else {
                 $password = mt_rand(111111,999999);
-                $user = Db::name('user')->where('uname',$user_email)->update(['is_activated' => '1','password'=>md5($password)]);
+                $user = Db::name('user')->where('account',$user_email)->update(['is_activated' => '1','password'=>md5($password)]);
                 echo "邮箱激活成功,你的初始密码为".$password."-请尽快完善个人信息";
             }
         
@@ -36,7 +36,7 @@ class Utility extends \think\Controller
         $mailtype = "html";//邮件格式（HTML/TXT）,TXT为文本邮件
         $mmsg = "您已经注册成功,请将点击以下链接激活您的账号： <a href='http://localhost:8080/detectiveboy/index.php/index/Utility/code_check?code=".$actcodes."'>点击激活</a>";
         
-        $user = Db::name('user')->where('uname',$toemail)->find();
+        $user = Db::name('user')->where('account',$toemail)->find();
         if($user['is_activated']==='1'){
             echo "该账号已激活";
             exit();
@@ -48,7 +48,7 @@ class Utility extends \think\Controller
             $data = ['code' => $actcodes, 'email' => $toemail];
             $code = Db::name('code')->insert($data);
             //插入用户
-            $data = ['password' => md5(123456), 'uname' => $toemail,'creattime'=>date('Y-m-d h-i-s',time()),'is_activated'=>0];
+            $data = ['password' => md5(123456),'account' => $toemail, 'uname' => $toemail,'creattime'=>time(),'is_activated'=>0];
             $user = Db::name('user')->insert($data);
             if($code == 1){
                 $smtp = $this->smtp_fig();//连接smtp服务器

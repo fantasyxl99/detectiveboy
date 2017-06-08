@@ -6,18 +6,17 @@ class Index extends \think\Controller
     public function index()
     {
         
-        $list = Db::name('menu')->where('pid',0)->select();
-        $list2 = Db::name('menu')->where('pid!=0')->select();
+        $list    = Db::name('menu')->where('pid',0)->select();
+        $list2   = Db::name('menu')->where('pid!=0')->select();
+        $acticle = Db::name('acticle')->select();
+        $author  = Db::name('user')->select();
+        
+        $ac_au   = array_merge($acticle,$author);
         // 模板变量赋值
-        //$this->menu  =$list;
-        $a = array(1,2,3,4,5);
-        $this->assign('menu',$list);
-        $this->assign('menu2',$list2);
-        $this->assign('email','thinkphp@qq.com');
-        // 或者批量赋值
         $this->assign([
-            'name'  => 'ThinkPHP',
-            'email' => 'thinkphp@qq.com'
+            'menu'  => $list,
+            'menu2' => $list2,
+            'ac_au' => $ac_au
         ]);
         // 模板输出
         return $this->fetch();
